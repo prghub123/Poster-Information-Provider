@@ -10,4 +10,6 @@ with open('credentials.csv', 'r') as input:
         access_key = line[2]
         password = line[3]
 img = '' #pass in image here
+#print(access_key)
+#print(password)
 boto3_client = boto3.client('rekognition', aws_access_key_id = access_key, aws_secret_access_key = password)
