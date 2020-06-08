@@ -15,9 +15,8 @@ import boto3
 class text_analysis():
     #function to replace contractions with expanded words; utilizes dictionary of possible contractions
     #returns list of all elements without contructions
-    def remove_contractions(text):
-        contractions =
-        {
+    def remove_contractions(self, text):
+        contractions = {
         "ain't": "am not / are not",
         "aren't": "are not / am not",
         "can't": "cannot",
@@ -136,11 +135,14 @@ class text_analysis():
         "you're": "you are",
         "you've": "you have"
         }
-        #iterate through words in text and determine if contractions
+        #iterate through words in text and determine if contractions exist
         for index in range(0, len(text)):
-            #if contraction, replace the contractions with the corresponding expanded word(key -> pair) in dictionary
+            #if the token is a contraction, replace the contractionwith the corresponding expanded word(key -> value) in dictionary
+            #print(text[index])
+            #print("Lowercase word")
+            #print(text[index].lower())
             if(text[index].lower() in contractions):
-                text[index] = contractions[text[index]]
+                text[index] = contractions[text[index].lower()]
         return text
     #invokes AWS text recognition from image parameter
     def recognize_text(self, picture):
@@ -153,22 +155,21 @@ class text_analysis():
     #returns Textblob object
     def filter_words(self, text):
         text[:] = [x for x in text if not ('LINE' == x.get('Type'))]
-        print("Filtering out Lines")
-        print(text)
+        #print("Filtering out Lines")
+        #print(text)
         #print(text)
         #filter words based on confidence level
         words = [x.get('DetectedText') for x in text if (x.get('Confidence') > 50)]
-        print("Filtering out from confidence level")
-        print(words)
+        #print("Filtering out from confidence level")
+        #print(words)
         #replace potential contractions
         new_words = self.remove_contractions(words)
         #print(words)
-        #POS-tagging to extract useful words (maybe)
         full_string = ""
         for word in new_words:
             full_string += (word + ' ')
-        print("Here is the full string ")
-        print(full_string)
+        #print("Here is the full string ")
+        #print(full_string)
         blob = TextBlob(full_string)
         return blob
         #print(tags)
@@ -177,8 +178,8 @@ class text_analysis():
     #function to assess sentiment of text
     #returns textblob object
     def sentiment(self, blob):
-        print("Passed in Sentiment blob")
-        print(blob.words)
+        #print("Passed in Sentiment blob")
+        #print(blob.words)
         subject = blob.sentiment.subjectivity
         polar = blob.sentiment.polarity
         print("Subjectivity Rating: ", subject)
@@ -199,7 +200,7 @@ class text_analysis():
     def remove_noise(self, blob):
         #remove stopwords
         stop_words = set(stopwords.words('english'))
-        stopwords_fil_blob = [element for element in blob.words if element not in stop_words]
+        stopwords_fil_blob = [element for element in blob.words if element.lower() not in stop_words]
         #remove URLs
         url_tags = ['.com', '.org', '.edu', '.gov', 'https', 'www.']
         #iterate through tags
@@ -211,7 +212,7 @@ class text_analysis():
                     stopwords_fil_blob.remove(element)
         #convert curated words to strings
         stopwords_fil_blob = [str(element) for element in stopwords_fil_blob]
-        stopwords_fil_blob = ''.join(stopwords_fil_blob)
+        stopwords_fil_blob = ' '.join(stopwords_fil_blob)
         return TextBlob(stopwords_fil_blob)
 
     #lemmazation and stemming processing
@@ -226,7 +227,7 @@ class text_analysis():
             #invoke lemmatize method and append to list
             lem.append(w.lemmatize())
         lem = [str(element) for element in lem]
-        lem = ''.join(lem)
+        lem = ' '.join(lem)
         return TextBlob(lem)
 
     #process text blob to remove excess information
@@ -239,10 +240,11 @@ class text_analysis():
          return processed_blob
 
 
+
 #testing class
 analysis = text_analysis()
 text = analysis.recognize_text('blueberries.jpg')
 theblob = analysis.filter_words(text)
 analysis.sentiment(theblob)
 process_blob = analysis.preprocess(theblob)
-#print(process_blob.words)
+print(process_blob.words)
