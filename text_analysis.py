@@ -242,9 +242,3 @@ class text_analysis():
 
 
 #testing class
-analysis = text_analysis()
-text = analysis.recognize_text('blueberries.jpg')
-theblob = analysis.filter_words(text)
-analysis.sentiment(theblob)
-process_blob = analysis.preprocess(theblob)
-print(process_blob.words)
