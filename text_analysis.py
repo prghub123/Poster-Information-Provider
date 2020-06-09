@@ -12,7 +12,7 @@ import boto3
 
 #creates class to analyze text: sentiment, lemmazation, filtering, etc
 #returns text
-class text_analysis():
+class text_analysis:
     #function to replace contractions with expanded words; utilizes dictionary of possible contractions
     #returns list of all elements without contructions
     def remove_contractions(self, text):

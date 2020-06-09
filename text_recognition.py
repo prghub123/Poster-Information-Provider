@@ -5,7 +5,7 @@ import boto3
 
 #Creates Class that initializes AWS boto3 client; Functionality includes
 #opening an image and extracting text info in the image
-class text_recog():
+class text_recog:
 
     #retreving access key and password for AWS
     def __init__(self):
